@@ -1,5 +1,8 @@
-import type { Puzzle } from "../data/puzzles";
 import { useEffect, useRef, useState } from "react";
+import type { Puzzle } from "../data/puzzles";
+import villageBg from "../assets/village-bg.png";
+import houseUnlocked from "../assets/house-unlocked.png";
+import houseLocked from "../assets/house-locked.png";
 
 type RailwayMapProps = {
   puzzles: Puzzle[];
@@ -9,9 +12,10 @@ type RailwayMapProps = {
 
 const SVG_WIDTH = 320;
 const ROW_HEIGHT = 140;
+const HOUSE_SIZE = 64;
+const GROUND_Y = 0;
 
 function getHousePosition(index: number): { x: number; y: number } {
-  // Alternate left/right using a sine wave, moving down the screen as index increases.
   const x = SVG_WIDTH / 2 + Math.sin(index * 1.4) * 90;
   const y = 80 + index * ROW_HEIGHT;
   return { x, y };
@@ -25,7 +29,6 @@ function buildPathD(puzzles: Puzzle[]): string {
   for (let i = 1; i < points.length; i++) {
     const prev = points[i - 1];
     const curr = points[i];
-    // A smooth curve between each pair of houses, rather than a straight line.
     const midY = (prev.y + curr.y) / 2;
     d += ` C ${prev.x} ${midY}, ${curr.x} ${midY}, ${curr.x} ${curr.y}`;
   }
@@ -36,81 +39,84 @@ function RailwayMap({ puzzles, unlockedCount, onHouseClick }: RailwayMapProps) {
   const svgHeight = 80 + puzzles.length * ROW_HEIGHT;
   const pathD = buildPathD(puzzles);
 
-    const previousUnlockedCount = useRef(unlockedCount);
-    const [justUnlockedIndex, setJustUnlockedIndex] = useState<number | null>(null);
+  const previousUnlockedCount = useRef(unlockedCount);
+  const [justUnlockedIndex, setJustUnlockedIndex] = useState<number | null>(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (unlockedCount > previousUnlockedCount.current) {
-        // The newly unlocked house is at index (unlockedCount - 1)
-        setJustUnlockedIndex(unlockedCount - 1);
-        const timer = setTimeout(() => setJustUnlockedIndex(null), 600);
-        previousUnlockedCount.current = unlockedCount;
-        return () => clearTimeout(timer);
+      setJustUnlockedIndex(unlockedCount - 1);
+      const timer = setTimeout(() => setJustUnlockedIndex(null), 600);
+      previousUnlockedCount.current = unlockedCount;
+      return () => clearTimeout(timer);
     }
     previousUnlockedCount.current = unlockedCount;
-    }, [unlockedCount]);
+  }, [unlockedCount]);
 
   return (
-    <svg
-      width="100%"
-      viewBox={`0 0 ${SVG_WIDTH} ${svgHeight}`}
-      className="railway-map"
+    <div
+      className="village-background"
+      style={{ backgroundImage: `url(${villageBg})` }}
     >
-      {/* The track itself */}
-      <path
-        d={pathD}
-        fill="none"
-        stroke="#8d6e63"
-        strokeWidth={6}
-        strokeDasharray="14 10"
-        strokeLinecap="round"
-      />
+      <svg
+        width="100%"
+        viewBox={`0 0 ${SVG_WIDTH} ${svgHeight}`}
+        className="railway-map"
+      >
+        <path
+          d={pathD}
+          fill="none"
+          stroke="#c9a876"
+          strokeWidth={10}
+          strokeLinecap="round"
+          opacity={0.85}
+        />
+        <path
+          d={pathD}
+          fill="none"
+          stroke="#a8825c"
+          strokeWidth={10}
+          strokeDasharray="2 14"
+          strokeLinecap="round"
+        />
 
-      {/* One house per puzzle, positioned along the track */}
-      {puzzles.map((puzzle, index) => {
-        const { x, y } = getHousePosition(index);
-        const isUnlocked = index < unlockedCount;
+        {puzzles.map((puzzle, index) => {
+          const { x, y } = getHousePosition(index);
+          const isUnlocked = index < unlockedCount;
+          const sprite = isUnlocked ? houseUnlocked : houseLocked;
 
-        return (
+          return (
             <g
-            key={puzzle.id}
-            transform={`translate(${x}, ${y})`}
-            onClick={() => isUnlocked && onHouseClick(index)}
-            className={(isUnlocked ? "house-icon unlocked" : "house-icon locked") + (index === justUnlockedIndex ? " just-unlocked" : "")}
+              key={puzzle.id}
+              transform={`translate(${x}, ${y})`}
+              onClick={() => isUnlocked && onHouseClick(index)}
+              className={isUnlocked ? "house-icon unlocked" : "house-icon locked"}
             >
-            <g className={index === justUnlockedIndex ? "just-unlocked" : ""}>
-                {/* all the shapes: ellipse, chimney, polygon, rects, circle, text — unchanged */}
+              <g className={index === justUnlockedIndex ? "just-unlocked" : ""}>
+                <ellipse
+                    cx={0}
+                    cy={GROUND_Y}
+                    rx={HOUSE_SIZE / 3}
+                    ry={5}
+                    fill="rgba(45,42,38,0.3)"
+                />
+                {/* House's bottom edge sits exactly on the same ground line */}
+                <image
+                    href={sprite}
+                    x={-HOUSE_SIZE / 2}
+                    y={GROUND_Y - HOUSE_SIZE}
+                    width={HOUSE_SIZE}
+                    height={HOUSE_SIZE}
+                />
+                <circle cx={16} cy={GROUND_Y - HOUSE_SIZE + 18} r={11} fill="#fff" stroke={isUnlocked ? "#c96f52" : "#8a8580"} strokeWidth={2} />
+                <text x={16} y={GROUND_Y - HOUSE_SIZE + 22} textAnchor="middle" fontSize={12} fontWeight="700" fill={isUnlocked ? "#c96f52" : "#8a8580"}>
+                    {index + 1}
+                </text>
+                </g>
             </g>
-            {/* Soft shadow under the house, grounds it on the path */}
-            <ellipse cx={0} cy={40} rx={26} ry={5} fill="rgba(45,42,38,0.15)" />
-
-            {/* Chimney (behind the roof, drawn first) */}
-            <rect x={14} y={-34} width={8} height={16} fill={isUnlocked ? "#c96f52" : "#8a8580"} />
-
-            {/* Roof */}
-            <polygon
-                points="-30,0 0,-30 30,0"
-                fill={isUnlocked ? "#c96f52" : "#8a8580"}
-            />
-
-            {/* Walls */}
-            <rect x={-24} y={0} width={48} height={36} rx={2} fill={isUnlocked ? "#f2cc8f" : "#c4c0b8"} />
-
-            {/* Window, "lit" only when unlocked */}
-            <rect x={-16} y={8} width={12} height={12} rx={2} fill={isUnlocked ? "#fff4d6" : "#a8a49c"} />
-
-            {/* Door */}
-            <rect x={2} y={14} width={16} height={22} rx={2} fill={isUnlocked ? "#8d5b3f" : "#6f6b64"} />
-
-            {/* House number badge */}
-            <circle cx={0} cy={-16} r={11} fill="#fff" stroke={isUnlocked ? "#c96f52" : "#8a8580"} strokeWidth={2} />
-            <text x={0} y={-12} textAnchor="middle" fontSize={13} fontWeight="700" fill={isUnlocked ? "#c96f52" : "#8a8580"}>
-                {index + 1}
-            </text>
-            </g>
-        );
+          );
         })}
-    </svg>
+      </svg>
+    </div>
   );
 }
 

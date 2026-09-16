@@ -1,8 +1,3 @@
-import puzzle1 from "../assets/puzzles/puzzle2.jpg";
-import puzzle2 from "../assets/puzzles/puzzle1.jpg";
-import puzzle3 from "../assets/puzzles/puzzle3.jpg";
-import puzzle4 from "../assets/puzzles/puzzle4.jpg";
-
 export type Puzzle = {
   id: number;
   name: string;
@@ -10,9 +5,37 @@ export type Puzzle = {
   imageUrl: string;
 };
 
-export const puzzles: Puzzle[] = [
-  { id: 1, name: "Puzzle 1", gridSize: 3, imageUrl:puzzle2},
-  { id: 2, name: "Puzzle 2", gridSize: 3, imageUrl:puzzle1},
-  { id: 3, name: "Puzzle 3", gridSize: 3, imageUrl:puzzle3},
-  { id: 3, name: "Puzzle 3", gridSize: 3, imageUrl:puzzle4},
-];
+function gridSizeForLevel(level: number): number {
+  if (level <= 5) return 3;   // levels 1-5
+  if (level <= 11) return 4;  // levels 6-11
+  if (level <= 19) return 5;  // levels 12-19
+  if (level <= 25) return 6;  // levels 20-25
+  if (level <= 28) return 7;  // levels 26-28
+  return 8;                   // levels 29-30
+}
+
+const imageModules = import.meta.glob<{ default: string }>(
+  "../assets/puzzles/*.jpg",
+  { eager: true }
+);
+
+function getImageForLevel(level: number): string {
+  const path = `../assets/puzzles/puzzle${level}.jpg`;
+  const mod = imageModules[path];
+  if (!mod) {
+    throw new Error(`Missing image for level ${level}. Expected file: puzzle${level}.jpg`);
+  }
+  return mod.default;
+}
+
+const TOTAL_LEVELS = 3; // TEMPORARY — change to 30 once you've sourced all images
+
+export const puzzles: Puzzle[] = Array.from({ length: TOTAL_LEVELS }, (_, i) => {
+  const level = i + 1;
+  return {
+    id: level,
+    name: `Level ${level}`,
+    gridSize: gridSizeForLevel(level),
+    imageUrl: getImageForLevel(level),
+  };
+});

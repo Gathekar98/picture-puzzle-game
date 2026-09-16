@@ -104,18 +104,34 @@ button:active:not(:disabled) {
   cursor: not-allowed;
 }
 
-.puzzle-grid {
-  width: 300px;
-  height: 300px;
+.puzzle-wrapper {
+  width: 100%;
   margin: 0 auto;
+  padding: 0 16px; /* breathing room on narrow phone screens */
+  box-sizing: border-box;
+}
+
+.puzzle-grid {
+  width: 100%;
+  aspect-ratio: 1 / 1;
   display: grid;
   border: 3px solid #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .puzzle-piece {
   cursor: grab;
   box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background-repeat: no-repeat;
+}
+
+.puzzle-piece:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 10px rgba(45, 42, 38, 0.25);
+  z-index: 1;
+  position: relative;
 }
 
 .back-btn {
@@ -160,20 +176,6 @@ button:active:not(:disabled) {
   100% { transform: scale(1); }
 }
 
-.puzzle-piece {
-  cursor: grab;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.puzzle-piece:hover {
-  transform: scale(1.04);
-  box-shadow: 0 4px 10px rgba(45, 42, 38, 0.25);
-  z-index: 1;
-  position: relative;
-}
-
 .puzzle-piece:active {
   cursor: grabbing;
 }
@@ -188,8 +190,6 @@ button:active:not(:disabled) {
 }
 
 .puzzle-grid {
-  width: 300px;
-  height: 300px;
   margin: 0 auto;
   display: grid;
   border: 3px solid #333;
@@ -205,4 +205,42 @@ button:active:not(:disabled) {
 @keyframes glow-pulse {
   from { box-shadow: 0 0 16px rgba(129, 178, 154, 0.5); }
   to { box-shadow: 0 0 32px rgba(129, 178, 154, 0.9); }
+}
+
+.village-background {
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  background-position: top center;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(45, 42, 38, 0.2);
+}
+
+.railway-map {
+  display: block;
+}
+
+.house-icon.unlocked {
+  cursor: pointer;
+}
+
+.house-icon.locked {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.house-icon.unlocked:hover image {
+  filter: brightness(1.1);
+}
+
+.just-unlocked {
+  animation: house-pop 0.6s ease;
+  transform-origin: center;
+}
+
+@keyframes house-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3); }
+  70% { transform: scale(0.92); }
+  100% { transform: scale(1); }
 }
