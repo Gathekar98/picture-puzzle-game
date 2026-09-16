@@ -1,33 +1,38 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import StartModal from "./components/StartModal";
 import MapScreen from "./components/MapScreen";
 import PuzzleScreen from "./components/PuzzleScreen";
-import { puzzles } from "./data/puzzles";
-import "./App.css";
 import SuccessModal from "./components/SuccessModal";
 import SplashScreen from "./components/SplashScreen";
+import { puzzles } from "./data/puzzles";
+import { loadProgress, saveProgress } from "./utils/storage";
+import "./App.css";
 
 type Stage = "splash" | "start" | "map" | "puzzle";
 
 function App() {
   const [stage, setStage] = useState<Stage>("splash");
-  const [unlockedCount, setUnlockedCount] = useState(1);
+  const [unlockedCount, setUnlockedCount] = useState<number>(() => loadProgress());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    saveProgress(unlockedCount);
+  }, [unlockedCount]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStage("start"), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const isLastPuzzle = currentIndex === puzzles.length - 1;
 
   const handleStart = () => setStage("map");
 
   const handleHouseClick = (index: number) => {
-   setCurrentIndex(index);
-   setStage("puzzle");
+    setCurrentIndex(index);
+    setStage("puzzle");
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => setStage("start"), 2500);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleSolved = () => setShowSuccess(true);
 
@@ -36,11 +41,10 @@ function App() {
   const handlePlayNext = () => {
     setShowSuccess(false);
 
-    if(isLastPuzzle){
+    if (isLastPuzzle) {
       setUnlockedCount(puzzles.length);
       setStage("map");
-    }
-    else{
+    } else {
       const nextIndex = currentIndex + 1;
       setUnlockedCount((prev) => Math.max(prev, nextIndex + 1));
       setCurrentIndex(nextIndex);
@@ -52,6 +56,7 @@ function App() {
     <div className="app">
       {stage === "splash" && <SplashScreen />}
       {stage === "start" && <StartModal onStart={handleStart} />}
+
       {stage === "map" && (
         <MapScreen
           puzzles={puzzles}
@@ -59,6 +64,7 @@ function App() {
           onHouseClick={handleHouseClick}
         />
       )}
+
       {stage === "puzzle" && (
         <PuzzleScreen
           key={currentIndex}
@@ -68,6 +74,7 @@ function App() {
           onBack={handleBack}
         />
       )}
+
       {showSuccess && (
         <SuccessModal isLast={isLastPuzzle} onPlayNext={handlePlayNext} />
       )}

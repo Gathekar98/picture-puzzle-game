@@ -1,8 +1,8 @@
 package com.ashwini.picpuzzle;
 
+import android.os.Build;
 import android.os.Bundle;
-import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewFeature;
+import android.webkit.WebSettings;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -10,14 +10,8 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-            WebSettingsCompat.setAlgorithmicDarkeningAllowed(
-                this.bridge.getWebView().getSettings(), false
-            );
-        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-            WebSettingsCompat.setForceDark(
-                this.bridge.getWebView().getSettings(), WebSettingsCompat.FORCE_DARK_OFF
-            );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // Android 10+
+            this.bridge.getWebView().getSettings().setForceDark(WebSettings.FORCE_DARK_OFF);
         }
     }
 }

@@ -34,6 +34,7 @@ h1, h2 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.3;
+  color: var(--color-text);
   margin: 12px 0;
 }
 
@@ -402,4 +403,11 @@ button:hover:not(:disabled)::after {
   font-size: 13px;
   color: #777;
   font-weight: 600;
+}
+
+.puzzle-piece.dragging {
+  z-index: 10;
+  cursor: grabbing;
+  box-shadow: 0 8px 20px rgba(45, 42, 38, 0.4);
+  transition: none; /* disable the hover transition while actively dragging, for instant tracking */
 }
