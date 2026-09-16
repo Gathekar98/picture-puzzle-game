@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PicPuzzle</string>
+    <string name="title_activity_main">PicPuzzle</string>
+    <string name="package_name">com.ashwini.picpuzzle</string>
+    <string name="custom_url_scheme">com.ashwini.picpuzzle</string>
+</resources>
