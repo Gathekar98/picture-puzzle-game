@@ -1,14 +1,24 @@
+/* ===== Design Tokens ===== */
 :root {
   --color-bg: #fdf6ec;
   --color-text: #2d2a26;
   --color-accent: #e07a5f;
+  --color-accent-light: #f4a58a;
   --color-success: #81b29a;
+  --color-success-light: #a8d4bd;
   --color-highlight: #f2cc8f;
+  --color-highlight-light: #ffe4ac;
   --color-locked: #9a958c;
+
+  --gradient-accent: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
+  --gradient-success: linear-gradient(135deg, var(--color-success-light), var(--color-success));
+  --gradient-gold: linear-gradient(135deg, #fff4d6, var(--color-highlight));
+
   --font-heading: "Quicksand", sans-serif;
   --font-body: system-ui, sans-serif;
 }
 
+/* ===== Base ===== */
 * {
   box-sizing: border-box;
 }
@@ -23,190 +33,200 @@ body {
 h1, h2 {
   font-family: var(--font-heading);
   font-weight: 700;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  background: #fff;
-  padding: 32px;
-  border-radius: 16px;
-  text-align: center;
-  max-width: 320px;
-  box-shadow: 0 8px 24px rgba(45, 42, 38, 0.15);
+  line-height: 1.3;
+  margin: 12px 0;
 }
 
 .modal h1 {
-  color: var(--color-text);
+  font-size: 26px;
+  line-height: 1.25;
 }
 
-.modal button,
-.house.unlocked {
-  background: var(--color-accent);
+.screen {
+  padding: 24px 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
 }
 
+/* ===== Buttons (primary/glossy style — default for all buttons) ===== */
 button {
   font-family: var(--font-body);
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  color: white;
+  background: var(--gradient-accent);
+  box-shadow:
+    0 4px 12px rgba(224, 122, 95, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 button:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(224, 122, 95, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 button:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.screen {
-  padding: 24px;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.track {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-top: 40px;
-  flex-wrap: wrap;
-}
-
-.house {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: none;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.house.unlocked {
-  background: #2a9d8f;
-  cursor: pointer;
-}
-
-.house.locked {
-  background: #ccc;
+button:disabled {
+  background: var(--color-locked);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-.puzzle-wrapper {
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 16px; /* breathing room on narrow phone screens */
-  box-sizing: border-box;
+button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: skewX(-20deg);
 }
 
-.puzzle-grid {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  display: grid;
-  border: 3px solid #333;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+button:hover:not(:disabled)::after {
+  animation: shine-sweep 0.6s ease;
 }
 
-.puzzle-piece {
-  cursor: grab;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  background-repeat: no-repeat;
+@keyframes shine-sweep {
+  from { left: -75%; }
+  to { left: 125%; }
 }
 
-.puzzle-piece:hover {
-  transform: scale(1.04);
-  box-shadow: 0 4px 10px rgba(45, 42, 38, 0.25);
-  z-index: 1;
-  position: relative;
-}
-
+/* ===== Back button — explicitly overrides the glossy button defaults ===== */
 .back-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(45, 42, 38, 0.15);
 }
 
-.hint {
+.back-btn::after {
+  display: none; /* no shine-sweep on the back button, it's a secondary action */
+}
+
+.back-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(45, 42, 38, 0.2);
+}
+
+/* ===== Overlay + Modal ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(45, 42, 38, 0.55), rgba(20, 18, 16, 0.75));
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: overlay-fade-in 0.25s ease;
+}
+
+.modal {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 36px 32px;
+  border-radius: 24px;
   text-align: center;
-  color: #777;
-}
-
-.railway-map {
-  display: block;
-  margin: 24px auto;
   max-width: 320px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 20px 50px rgba(45, 42, 38, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  animation: modal-pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.house-icon.unlocked {
-  cursor: pointer;
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.house-icon.locked {
-  cursor: not-allowed;
+@keyframes modal-pop-in {
+  0% { opacity: 0; transform: scale(0.7) translateY(24px); }
+  60% { opacity: 1; transform: scale(1.06) translateY(-6px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.house-icon.unlocked:hover polygon,
-.house-icon.unlocked:hover rect:first-of-type {
-  opacity: 0.85;
+.modal-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+  animation: icon-bounce 2s ease-in-out infinite;
 }
 
-.house-icon.just-unlocked {
-  animation: house-pop 0.6s ease;
+@keyframes icon-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
-@keyframes house-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.25); }
-  70% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+/* ===== Sparkles ===== */
+.sparkle-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.puzzle-piece:active {
-  cursor: grabbing;
-}
-.just-swapped {
-  animation: piece-flash 0.3s ease;
-}
-
-@keyframes piece-flash {
-  0% { filter: brightness(1); }
-  40% { filter: brightness(1.3); }
-  100% { filter: brightness(1); }
+.sparkle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, var(--color-highlight));
+  animation: twinkle 2s ease-in-out infinite;
 }
 
-.puzzle-grid {
-  margin: 0 auto;
-  display: grid;
-  border: 3px solid #333;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
-.puzzle-grid.solved {
-  border-color: var(--color-success);
-  box-shadow: 0 0 24px rgba(129, 178, 154, 0.7);
-  animation: glow-pulse 0.5s ease infinite alternate;
+/* ===== Confetti ===== */
+.confetti-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-@keyframes glow-pulse {
-  from { box-shadow: 0 0 16px rgba(129, 178, 154, 0.5); }
-  to { box-shadow: 0 0 32px rgba(129, 178, 154, 0.9); }
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
 }
 
+@keyframes confetti-fall {
+  0% { top: -10px; opacity: 1; }
+  100% { top: 110%; opacity: 0.3; }
+}
+
+/* ===== Village Map ===== */
 .village-background {
   background-repeat: repeat-y;
   background-size: 100% auto;
@@ -243,4 +263,68 @@ button:active:not(:disabled) {
   40% { transform: scale(1.3); }
   70% { transform: scale(0.92); }
   100% { transform: scale(1); }
+}
+
+/* ===== Puzzle Screen ===== */
+.puzzle-wrapper {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.puzzle-grid {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  border: 4px solid transparent;
+  background-image: linear-gradient(var(--color-bg), var(--color-bg)), var(--gradient-gold);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 8px 24px rgba(45, 42, 38, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.puzzle-grid.solved {
+  box-shadow: 0 0 32px rgba(129, 178, 154, 0.8);
+  animation: glow-pulse 0.5s ease infinite alternate;
+}
+
+@keyframes glow-pulse {
+  from { box-shadow: 0 0 16px rgba(129, 178, 154, 0.5); }
+  to { box-shadow: 0 0 32px rgba(129, 178, 154, 0.9); }
+}
+
+.puzzle-piece {
+  cursor: grab;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-repeat: no-repeat;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.puzzle-piece:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 10px rgba(45, 42, 38, 0.25);
+  z-index: 1;
+  position: relative;
+}
+
+.puzzle-piece:active {
+  cursor: grabbing;
+}
+
+.just-swapped {
+  animation: piece-flash 0.3s ease;
+}
+
+@keyframes piece-flash {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.3); }
+  100% { filter: brightness(1); }
+}
+
+.hint {
+  text-align: center;
+  color: #777;
 }
