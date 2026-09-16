@@ -8,6 +8,10 @@ type Sparkle = {
   delay: number;
 };
 
+type SparkleFieldProps = {
+  count?: number;
+};
+
 function generateSparkles(count: number): Sparkle[] {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -18,8 +22,8 @@ function generateSparkles(count: number): Sparkle[] {
   }));
 }
 
-function SparkleField() {
-  const sparkles = useMemo(() => generateSparkles(12), []);
+function SparkleField({ count = 12 }: SparkleFieldProps) {
+  const sparkles = useMemo(() => generateSparkles(count), [count]);
 
   return (
     <div className="sparkle-field">

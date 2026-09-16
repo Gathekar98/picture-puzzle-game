@@ -2,16 +2,23 @@ import { useState } from "react";
 import type { Puzzle } from "../data/puzzles";
 import { shuffledIndices, isSolved } from "../utils/puzzleHelpers";
 import { MAX_FRAME_WIDTH } from "../utils/puzzleSizing";
+import { useSound } from "../hooks/useSound";
+import swapSound from "../assets/sounds/swap.wav";
+import solveSound from "../assets/sounds/solve.wav";
 
 type PuzzleScreenProps = {
   puzzle: Puzzle;
+  totalLevels: number;
   onSolved: () => void;
   onBack: () => void;
 };
 
-function PuzzleScreen({ puzzle, onSolved, onBack }: PuzzleScreenProps) {
+function PuzzleScreen({ puzzle, totalLevels, onSolved, onBack }: PuzzleScreenProps) {
   const backgroundImage = `url(${puzzle.imageUrl})`;
   const gridSize = puzzle.gridSize;
+
+  const playSwap = useSound(swapSound);
+  const playSolve = useSound(solveSound);
 
   const [pieces, setPieces] = useState<number[]>(() =>
     shuffledIndices(gridSize * gridSize)
@@ -29,11 +36,13 @@ function PuzzleScreen({ puzzle, onSolved, onBack }: PuzzleScreenProps) {
 
       if (isSolved(next) && !solved) {
         setSolved(true);
+        playSolve();
         setTimeout(onSolved, 500);
       }
       return next;
     });
 
+    playSwap();
     setJustSwapped([dragIndex, dropIndex]);
     setTimeout(() => setJustSwapped(null), 300);
     setDragIndex(null);
@@ -42,7 +51,7 @@ function PuzzleScreen({ puzzle, onSolved, onBack }: PuzzleScreenProps) {
   return (
     <div className="screen">
       <button className="back-btn" onClick={onBack}>← Back</button>
-      <h2>{puzzle.name}</h2>
+      <h2>Level {puzzle.id} of {totalLevels}</h2>
 
       <div className="puzzle-wrapper" style={{ maxWidth: MAX_FRAME_WIDTH }}>
         <div
@@ -55,8 +64,6 @@ function PuzzleScreen({ puzzle, onSolved, onBack }: PuzzleScreenProps) {
           {pieces.map((pieceId, slotIndex) => {
             const row = Math.floor(pieceId / gridSize);
             const col = pieceId % gridSize;
-
-            // Percentage-based slicing: works at ANY rendered size, no pixels involved.
             const bgSize = `${gridSize * 100}% ${gridSize * 100}%`;
             const bgPosX = gridSize > 1 ? (col / (gridSize - 1)) * 100 : 0;
             const bgPosY = gridSize > 1 ? (row / (gridSize - 1)) * 100 : 0;

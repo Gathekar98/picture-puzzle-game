@@ -172,9 +172,11 @@ button:hover:not(:disabled)::after {
 }
 
 .modal-icon {
-  font-size: 48px;
+  width: 88px;
+  height: 88px;
   margin-bottom: 8px;
   animation: icon-bounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 6px 12px rgba(201, 155, 63, 0.4));
 }
 
 @keyframes icon-bounce {
@@ -327,4 +329,77 @@ button:hover:not(:disabled)::after {
 .hint {
   text-align: center;
   color: #777;
+}
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #fff4d6, var(--color-bg));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  animation: splash-fade-out 0.5s ease 2s forwards;
+}
+
+.splash-icon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 16px;
+  animation: icon-bounce 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 20px rgba(201, 155, 63, 0.5));
+}
+
+.splash-title {
+  font-size: 30px;
+  text-align: center;
+  padding: 0 24px;
+  animation: title-glow 1.5s ease-in-out infinite alternate;
+}
+
+.splash-subtitle {
+  color: #777;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+@keyframes splash-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes title-glow {
+  from { text-shadow: 0 0 8px rgba(242, 204, 143, 0.4); }
+  to { text-shadow: 0 0 20px rgba(242, 204, 143, 0.9); }
+}
+
+.progress-bar-container {
+  max-width: 280px;
+  margin: 0 auto 8px;
+  text-align: center;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(154, 149, 140, 0.25);
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(45, 42, 38, 0.15);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--gradient-gold);
+  transition: width 0.4s ease;
+}
+
+.progress-bar-label {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #777;
+  font-weight: 600;
 }

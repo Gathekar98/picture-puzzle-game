@@ -15,20 +15,20 @@ function gridSizeForLevel(level: number): number {
 }
 
 const imageModules = import.meta.glob<{ default: string }>(
-  "../assets/puzzles/*.jpg",
+  "../assets/puzzles/*.png",
   { eager: true }
 );
 
 function getImageForLevel(level: number): string {
-  const path = `../assets/puzzles/puzzle${level}.jpg`;
+  const path = `../assets/puzzles/puzzle${level}.png`;
   const mod = imageModules[path];
   if (!mod) {
-    throw new Error(`Missing image for level ${level}. Expected file: puzzle${level}.jpg`);
+    throw new Error(`Missing image for level ${level}. Expected file: puzzle${level}.png`);
   }
   return mod.default;
 }
 
-const TOTAL_LEVELS = 3; // TEMPORARY — change to 30 once you've sourced all images
+const TOTAL_LEVELS = 30;
 
 export const puzzles: Puzzle[] = Array.from({ length: TOTAL_LEVELS }, (_, i) => {
   const level = i + 1;

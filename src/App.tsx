@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import StartModal from "./components/StartModal";
 import MapScreen from "./components/MapScreen";
 import PuzzleScreen from "./components/PuzzleScreen";
 import { puzzles } from "./data/puzzles";
 import "./App.css";
 import SuccessModal from "./components/SuccessModal";
+import SplashScreen from "./components/SplashScreen";
 
-type Stage = "start" | "map" | "puzzle";
+type Stage = "splash" | "start" | "map" | "puzzle";
 
 function App() {
-  const [stage, setStage] = useState<Stage>("start");
+  const [stage, setStage] = useState<Stage>("splash");
   const [unlockedCount, setUnlockedCount] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -22,6 +23,11 @@ function App() {
    setCurrentIndex(index);
    setStage("puzzle");
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStage("start"), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSolved = () => setShowSuccess(true);
 
@@ -44,6 +50,7 @@ function App() {
 
   return (
     <div className="app">
+      {stage === "splash" && <SplashScreen />}
       {stage === "start" && <StartModal onStart={handleStart} />}
       {stage === "map" && (
         <MapScreen
@@ -53,11 +60,12 @@ function App() {
         />
       )}
       {stage === "puzzle" && (
-        <PuzzleScreen 
-        key={currentIndex}
-        puzzle={puzzles[currentIndex]}
-        onSolved={handleSolved}
-        onBack={handleBack}
+        <PuzzleScreen
+          key={currentIndex}
+          puzzle={puzzles[currentIndex]}
+          totalLevels={puzzles.length}
+          onSolved={handleSolved}
+          onBack={handleBack}
         />
       )}
       {showSuccess && (
