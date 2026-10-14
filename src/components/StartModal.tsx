@@ -20,9 +20,10 @@ function StartModal({ onStart }: StartModalProps) {
       <div className="modal">
         <SparkleField />
         <img src={medallionStart} alt="" className="modal-icon" />
+        <span className="modal-kicker">A cozy puzzle adventure</span>
         <h1>Picture Puzzle Journey</h1>
-        <p>Solve each puzzle to unlock the next house on the map.</p>
-        <button onClick={handleClick}>Start Playing</button>
+        <p>Rebuild beautiful pictures and light up every home along the village trail.</p>
+        <button onClick={handleClick}>Begin the journey</button>
       </div>
     </div>
   );

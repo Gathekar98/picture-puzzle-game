@@ -13,9 +13,20 @@ function MapScreen({ puzzles, unlockedCount, onHouseClick }: MapScreenProps) {
 
   return (
     <div className="screen">
-      <h2>Map</h2>
+      <header className="map-header">
+        <div className="map-heading">
+          <span className="eyebrow">Your adventure</span>
+          <h1>Puzzle Trail</h1>
+          <p>Restore every picture in the valley</p>
+        </div>
+        <div className="level-orb" aria-label={`Level ${Math.min(unlockedCount, puzzles.length)}`}>
+          {Math.min(unlockedCount, puzzles.length)}
+        </div>
+      </header>
       <ProgressBar completed={solvedCount} total={puzzles.length} />
-      <RailwayMap puzzles={puzzles} unlockedCount={unlockedCount} onHouseClick={onHouseClick} />
+      <div className="village-shell">
+        <RailwayMap puzzles={puzzles} unlockedCount={unlockedCount} onHouseClick={onHouseClick} />
+      </div>
     </div>
   );
 }

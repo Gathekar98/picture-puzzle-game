@@ -68,8 +68,9 @@ function RailwayMap({ puzzles, unlockedCount, onHouseClick }: RailwayMapProps) {
       style={{ backgroundImage: `url(${villageBg})` }}
     >
       <svg width="100%" viewBox={`0 0 ${SVG_WIDTH} ${svgHeight}`} className="railway-map">
-        <path d={pathD} fill="none" stroke="#c9a876" strokeWidth={10} strokeLinecap="round" opacity={0.85} />
-        <path d={pathD} fill="none" stroke="#a8825c" strokeWidth={10} strokeDasharray="2 14" strokeLinecap="round" />
+        <path d={pathD} fill="none" stroke="rgba(55,91,68,.28)" strokeWidth={15} strokeLinecap="round" />
+        <path d={pathD} fill="none" stroke="#f4d58b" strokeWidth={10} strokeLinecap="round" />
+        <path d={pathD} fill="none" stroke="#b78648" strokeWidth={3} strokeDasharray="2 13" strokeLinecap="round" />
 
         <image href={villageGate} x={SVG_WIDTH / 2 - 90} y={10} width={180} height={90} />
         <image
@@ -90,6 +91,12 @@ function RailwayMap({ puzzles, unlockedCount, onHouseClick }: RailwayMapProps) {
               key={puzzle.id}
               transform={`translate(${x}, ${y})`}
               onClick={() => isUnlocked && onHouseClick(index)}
+              onKeyDown={(event) => {
+                if (isUnlocked && (event.key === "Enter" || event.key === " ")) onHouseClick(index);
+              }}
+              role="button"
+              tabIndex={isUnlocked ? 0 : -1}
+              aria-label={isUnlocked ? `Play level ${puzzle.id}` : `Level ${puzzle.id} locked`}
               className={isUnlocked ? "house-icon unlocked" : "house-icon locked"}
             >
               <g className={index === justUnlockedIndex ? "just-unlocked" : ""}>

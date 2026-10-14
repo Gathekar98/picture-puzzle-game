@@ -7,7 +7,7 @@ function SplashScreen() {
       <SparkleField count={40} />
       <img src={medallionSplash} alt="" className="splash-icon" />
       <h1 className="splash-title">Picture Puzzle Journey</h1>
-      <p className="splash-subtitle">Welcome to the village...</p>
+      <p className="splash-subtitle">A story in every piece</p>
     </div>
   );
 }

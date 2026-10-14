@@ -24,6 +24,7 @@ function SuccessModal({ isLast, onPlayNext }: SuccessModalProps) {
         <Confetti />
         <SparkleField />
         <img src={isLast ? medallionTrophy : medallionWin} alt="" className="modal-icon" />
+        <span className="modal-kicker">{isLast ? "Grand finale" : "Picture restored"}</span>
         <h1>{isLast ? "Village Complete!" : "You did it!"}</h1>
         <p>
           {isLast
@@ -31,7 +32,7 @@ function SuccessModal({ isLast, onPlayNext }: SuccessModalProps) {
             : "Puzzle solved. Ready for the next one?"}
         </p>
         <button onClick={handleClick}>
-          {isLast ? "Back to Map" : "Play Next"}
+          {isLast ? "Return to the trail" : "Next adventure"}
         </button>
       </div>
     </div>

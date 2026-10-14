@@ -98,11 +98,17 @@ function PuzzleScreen({ puzzle, totalLevels, onSolved, onBack }: PuzzleScreenPro
 
   return (
     <div className="screen">
-      <button className="back-btn" onClick={onBack}>← Back</button>
-      <h2>Level {puzzle.id} of {totalLevels}</h2>
+      <header className="puzzle-header">
+        <button className="back-btn" onClick={onBack} aria-label="Back to puzzle trail">←</button>
+        <div className="puzzle-heading">
+          <span className="eyebrow">Picture {puzzle.id} of {totalLevels}</span>
+          <h1>Piece it together</h1>
+        </div>
+        <span className="difficulty-chip">{gridSize} × {gridSize}</span>
+      </header>
 
       <div className="puzzle-wrapper" style={{ maxWidth: MAX_FRAME_WIDTH }}>
-        <div
+        <div className="puzzle-card"><div
           ref={gridRef}
           className={"puzzle-grid" + (solved ? " solved" : "")}
           style={{
@@ -142,10 +148,10 @@ function PuzzleScreen({ puzzle, totalLevels, onSolved, onBack }: PuzzleScreenPro
               />
             );
           })}
-        </div>
+        </div></div>
       </div>
 
-      <p className="hint">Press and drag a piece onto another to swap them.</p>
+      <div className="hint-card"><span className="hint-icon">↔</span><span>Drag one piece onto another to swap them</span></div>
     </div>
   );
 }
